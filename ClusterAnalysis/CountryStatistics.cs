@@ -21,8 +21,13 @@ namespace ClusterAnalysis
 
         public DoubleVector GetDoubleVector()
         {
-            return new DoubleVector(this.MeatConsumption, this.ButterConsumption, 
+            return new DoubleVector(this.MeatConsumption, this.ButterConsumption,
                                     this.SugarConsumption, this.DeathLevel);
+        }
+
+        public override string ToString()
+        {
+            return this.Country;
         }
     }
 }

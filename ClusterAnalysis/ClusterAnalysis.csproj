@@ -48,6 +48,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,8 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountryStatistics.cs" />
-    <Compile Include="DistanceCounter.cs" />
-    <Compile Include="Normalizator.cs" />
+    <Compile Include="Helpers\ChartCreator.cs" />
+    <Compile Include="Helpers\ConsoleWriter.cs" />
+    <Compile Include="Helpers\NMathHelper.cs" />
+    <Compile Include="Helpers\Normalizator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

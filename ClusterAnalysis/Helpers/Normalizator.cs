@@ -43,12 +43,12 @@ namespace ClusterAnalysis
         private void GetNormalizedValues(double[] metrics, int maxValue)
         {
             int countryStatisticsCount = this.CountryStatistics.Length;
-            double minMeatConsumption = metrics.Min();
+            double minMetrics = metrics.Min();
             for (int i = 0; i < countryStatisticsCount; i++)
-                metrics[i] -= minMeatConsumption;
+                metrics[i] -= minMetrics;
 
-            double maxMeatConsumption = metrics.Max();
-            double factor = maxValue / maxMeatConsumption;
+            double maxMetrics= metrics.Max();
+            double factor = maxValue / maxMetrics;
             for (int i = 0; i < countryStatisticsCount; i++)
                 metrics[i] *= factor;
         }
