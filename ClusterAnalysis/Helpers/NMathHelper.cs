@@ -1,4 +1,5 @@
 ﻿using System;
+using AccordDistance = Accord.Math.Distance;
 using CenterSpace.NMath.Core;
 using CenterSpace.NMath.Stats;
 using NMathClusterAnalysis = CenterSpace.NMath.Stats.ClusterAnalysis;
@@ -15,7 +16,7 @@ namespace ClusterAnalysis.Helpers
 
         private string[] distanceFunctions;
         private string[] DistanceFunctions => this.distanceFunctions ??
-            (this.distanceFunctions = new string[] { "Euclidean distance function", "Power distance function", "Maximum distance function" });
+            (this.distanceFunctions = new string[] { "Euclidean distance function", "Mahalanobis distance function", "Maximum distance function" });
 
         private string[] linkageFunctions;
         private string[] LinkageFunctions => this.linkageFunctions ??
@@ -61,7 +62,7 @@ namespace ClusterAnalysis.Helpers
             if (this.doubleMatrix == null)
                 return;
 
-            var powerDistance = new Distance.PowerDistance(4, 4);
+            Distance.Function MahalanobisDistanceFunction = new Distance.Function(this.MahalanobisDistance);
             this.analysisResults = new NMathClusterAnalysis[3, 3]
             {
                 {
@@ -70,9 +71,9 @@ namespace ClusterAnalysis.Helpers
                     new NMathClusterAnalysis(this.doubleMatrix, Distance.EuclideanFunction, Linkage.CentroidFunction),
                 },
                 {
-                    new NMathClusterAnalysis(this.doubleMatrix, powerDistance.Function, Linkage.CompleteFunction),
-                    new NMathClusterAnalysis(this.doubleMatrix, powerDistance.Function, Linkage.WeightedAverageFunction),
-                    new NMathClusterAnalysis(this.doubleMatrix, powerDistance.Function, Linkage.CentroidFunction),
+                    new NMathClusterAnalysis(this.doubleMatrix, MahalanobisDistanceFunction, Linkage.CompleteFunction),
+                    new NMathClusterAnalysis(this.doubleMatrix, MahalanobisDistanceFunction, Linkage.WeightedAverageFunction),
+                    new NMathClusterAnalysis(this.doubleMatrix, MahalanobisDistanceFunction, Linkage.CentroidFunction),
                 },
                 {
                     new NMathClusterAnalysis(this.doubleMatrix, Distance.MaximumFunction, Linkage.CompleteFunction),
@@ -80,6 +81,41 @@ namespace ClusterAnalysis.Helpers
                     new NMathClusterAnalysis(this.doubleMatrix, Distance.MaximumFunction, Linkage.CentroidFunction),
                 },
             };
+        }
+
+        private double MahalanobisDistance(DoubleVector xVector, DoubleVector yVector)
+        {
+            int n = xVector.Length;
+
+            double averageX = 0;
+            foreach (double xValue in xVector)
+                averageX += xValue;
+            averageX /= n;
+
+            double averageY = 0;
+            foreach (double yValue in yVector)
+                averageY += yValue;
+            averageY /= n;
+
+            double[,] covariance = new double[n, n];
+            double x;
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    double a = xVector[i] - averageX;
+                    double b = yVector[k] - averageY;
+                    x = a * b;
+                    covariance[i, k] = x;
+                }
+            }
+
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    covariance[i, j] = 1 / covariance[i, j];
+
+            return AccordDistance.Mahalanobis(xVector.ToArray(), yVector.ToArray(), covariance);
         }
 
         public void GetCopheneticCorrelations()
